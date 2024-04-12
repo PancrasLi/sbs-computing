@@ -1,0 +1,31 @@
+{
+  "name": "sbs-computing",
+  "private": false,
+  "version": "1.1.0",
+  "type": "module",
+  "author":"李鹏杰<lipancras@gmail.com>",
+  "license": "MIT",
+  "description": "sbs.js",
+  "keywords": [
+    "sbs.js"
+  ],
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
+  "main": "./dist/sbs.umd.cjs",
+  "module": "./dist/sbs.js",
+  "types": "./index.d.ts",
+  "exports": {
+    "types": "./index.d.ts",
+    "import": "./dist/sbs.js",
+    "require": "./dist/sbs.umd.cjs"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "vite": "^5.0.10"
+  }
+}

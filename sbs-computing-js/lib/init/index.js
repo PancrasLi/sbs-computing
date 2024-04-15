@@ -2,7 +2,8 @@ import { setFormulasVariableToConfig } from "../core/setFormulasVariableToConfig
 let sbs = {
     init,
     getConfig,
-    callback
+    callback,
+    setConfig
 }
 let __haveDependentConfig = null
 function initConfigData(configData){
@@ -16,6 +17,10 @@ function init (configData){
 
 function getConfig() {
     return __haveDependentConfig
+}
+
+function setConfig(key,value){
+    __haveDependentConfig[key].value = value
 }
 
 function callback(config){

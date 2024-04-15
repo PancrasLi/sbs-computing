@@ -2,7 +2,7 @@ import sbs from "../init";
 import { debounce, deepClone } from "../utils/index";
 function changeObCallbackHandle(changeConfigKey, changeConfigValue, target) {
     function doTask() {
-        computingStep(changeConfigKey, target.fkey)
+        computingStep(changeConfigKey, target)
     }
 
     if (target.fkey) {
@@ -10,15 +10,16 @@ function changeObCallbackHandle(changeConfigKey, changeConfigValue, target) {
     }
 
 }
-function computingStep(type, computingKey) {
-    let res = deepClone(sbs.getConfig())
-    if (sbs.getConfig() && res) {
+function computingStep(type, target) {
+    if (sbs.getConfig()) {
         Object.keys(sbs.getConfig()).forEach(key => {
-            if (sbs.getConfig()[key].__variable__?.includes(computingKey)) {
-                res[key].value = sbs.getConfig()[key].computHandle() - 0
+            if (sbs.getConfig()[key].__variable__?.includes(target.fkey)) {
+               sbs.setConfig(key,sbs.getConfig()[key].computHandle(target))
             }
         })
+        let res = deepClone(sbs.getConfig())
         sbs.callback(res)
+        // sbs.setConfig(res)
     }
 }
 export {

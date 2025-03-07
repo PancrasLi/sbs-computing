@@ -43,4 +43,41 @@ function deepClone(target, hash = new WeakMap) {
     return clonedTarget
   }
   
+/**
+ * 验证数值范围
+ * @param {number} value - 要验证的值
+ * @param {Object} options - 验证选项
+ * @returns {boolean}
+ */
+export function validateNumberRange(value, { min, max, precision } = {}) {
+    if (typeof value !== 'number') return false;
+    if (min != null && value < min) return false;
+    if (max != null && value > max) return false;
+    if (precision != null) {
+        const factor = Math.pow(10, precision);
+        return Math.round(value * factor) === value * factor;
+    }
+    return true;
+}
+
+/**
+ * 格式化数值
+ * @param {number} value - 要格式化的值
+ * @param {Object} options - 格式化选项
+ * @returns {string}
+ */
+export function formatNumber(value, { precision = 2, unit = '', thousandsSeparator = true } = {}) {
+    if (typeof value !== 'number') return String(value);
+    
+    let formatted = value.toFixed(precision);
+    
+    if (thousandsSeparator) {
+        const parts = formatted.split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        formatted = parts.join('.');
+    }
+    
+    return `${formatted}${unit}`;
+}
+
 export { isPlainObject,debounce,deepClone}

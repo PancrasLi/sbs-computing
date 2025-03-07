@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBS Computing Debugger</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Microsoft YaHei", sans-serif;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin-top: 0;
+            color: #333;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+        button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        pre {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 4px;
+            overflow: auto;
+        }
+        #config-input {
+            width: 100%;
+            height: 150px;
+            margin: 10px 0;
+            font-family: monospace;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .error {
+            color: #f44336;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SBS Computing Debugger Demo</h1>
+        <div class="controls">
+            <button onclick="window.startDebugging()">Start Debugging</button>
+            <button onclick="window.runExample()">Run Example</button>
+        </div>
+        <div>
+            <h3>Configuration:</h3>
+            <textarea id="config-input" placeholder="Enter configuration here..."></textarea>
+            <button onclick="window.applyConfig()">Apply Configuration</button>
+        </div>
+        <div id="error" class="error"></div>
+        <pre id="output"></pre>
+    </div>
+
+    <script type="module">
+        import { initConfigData, computingProcess } from '../lib/core/computingProcess.js';
+        import browserDebugger from '../lib/debug/browserDebugger.js';
+        
+        // Example configuration
+        const exampleConfig = {
+            "price": { value: 100 },
+            "quantity": { value: 5 },
+            "discount": { value: 10 },
+            "subtotal": { eqn: "price * quantity" },
+            "total": { eqn: "subtotal * (1 - discount / 100)" }
+        };
+
+        // 错误显示函数
+        function showError(message) {
+            document.getElementById('error').textContent = message;
+        }
+
+        // 清除错误
+        function clearError() {
+            document.getElementById('error').textContent = '';
+        }
+
+        // 启动调试
+        window.startDebugging = () => {
+            clearError();
+            try {
+                // 加载示例配置到输入框
+                document.getElementById('config-input').value = 
+                    JSON.stringify(exampleConfig, null, 2);
+                document.getElementById('output').textContent = 
+                    'Debugger ready. You can:\n' +
+                    '1. Edit configuration in the text box\n' +
+                    '2. Click "Apply Configuration" to test your changes\n' +
+                    '3. Click "Run Example" to see a demo calculation';
+                
+                // 显示调试面板
+                browserDebugger.toggle();
+            } catch (error) {
+                showError(`Failed to start debugger: ${error.message}`);
+            }
+        };
+
+        // 运行示例
+        window.runExample = () => {
+            clearError();
+            try {
+                // 初始化配置
+                const config = initConfigData(exampleConfig);
+                
+                // 开始计算
+                computingProcess(config, (result) => {
+                    document.getElementById('output').textContent = 
+                        JSON.stringify(result, null, 2);
+                    
+                    // 更新调试器数据
+                    browserDebugger.updateDebugData(result);
+                });
+            } catch (error) {
+                showError(`Failed to run example: ${error.message}`);
+            }
+        };
+
+        // 应用新配置
+        window.applyConfig = () => {
+            clearError();
+            try {
+                const configText = document.getElementById('config-input').value;
+                const config = JSON.parse(configText);
+                
+                // 初始化配置
+                const processedConfig = initConfigData(config);
+                
+                // 开始计算
+                computingProcess(processedConfig, (result) => {
+                    document.getElementById('output').textContent = 
+                        JSON.stringify(result, null, 2);
+                    
+                    // 更新调试器数据
+                    browserDebugger.updateDebugData(result);
+                });
+            } catch (error) {
+                showError(`Failed to apply configuration: ${error.message}`);
+            }
+        };
+
+        // 初始化页面
+        window.startDebugging();
+    </script>
+</body>
+</html> 

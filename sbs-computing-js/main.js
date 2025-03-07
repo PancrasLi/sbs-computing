@@ -1,6 +1,12 @@
 import './style.css'
-import javascriptLogo from './javascript.svg'
-import { setupCounter } from './lib/main.js'
+import { computingConfig, enableDebugging } from './lib/main.js'
+
+// 启用调试模式
+enableDebugging();
+
+// 示例：修改值并观察计算过程
+computingConfig.a.value = 150;
+computingConfig.price.value = 7.99;
 
 document.querySelector('#app').innerHTML = `
   <div>
